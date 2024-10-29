@@ -3,7 +3,3 @@
 ```
 Testing action
 ```
-
-```
-Testing confluence v2
-```
