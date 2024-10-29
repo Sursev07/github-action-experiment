@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check for Confluence Release Plan Link in PR Description
+        id: link_check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -30,6 +31,7 @@ jobs:
             echo "::error::A Confluence release plan link with the domain https://ajaib.atlassian.net/wiki/ is missing in the PR description."
             exit 1  # Fail the action if the link is missing
           else
+            echo "::set-output name=confluence_link::$LINK"
             echo "Found Confluence Link: $LINK"
           fi
 
@@ -50,6 +52,8 @@ jobs:
           fi
 
       - name: Validate Confluence Page Exists (No Auth)
+        env:
+          LINK: ${{ steps.link_check.outputs.confluence_link }}
         run: |
           echo "Checking Confluence Page Link: $LINK"
           
