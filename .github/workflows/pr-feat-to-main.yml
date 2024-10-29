@@ -53,3 +53,15 @@ jobs:
           fi
 
           echo "Confluence release plan link found, and date matches the current date."
+
+      - name: Validate Confluence Page Exists (No Auth)
+        run: |
+          # Check if the Confluence page exists
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$LINK")
+
+          if [[ "$STATUS_CODE" -ne 200 ]]; then
+            echo "::error::Confluence document not found or is not publicly accessible. Please check the link."
+            exit 1
+          else
+            echo "Confluence document is accessible."
+          fi
