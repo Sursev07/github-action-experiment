@@ -5,5 +5,5 @@ Testing action
 ```
 
 ```
-Testing confluence
+Testing confluence v2
 ```
