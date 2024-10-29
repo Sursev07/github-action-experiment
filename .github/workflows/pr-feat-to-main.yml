@@ -9,7 +9,7 @@ jobs:
   check-confluence-link:
     runs-on: ubuntu-latest
     steps:
-      - name: Check for Confluence Release Plan Link
+      - name: Check for Confluence Release Plan Link in PR Description
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -18,41 +18,36 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             "${{ github.event.pull_request.url }}" | jq -r .body)
 
-          # Print the PR description for debugging
-          echo "PR Description: $DESCRIPTION"
-
-          # Get the current date in YYYY-MM-DD format
+          # Get current date in YYYY-MM-DD format (e.g., 2024-10-29)
           CURRENT_DATE=$(date +'%Y-%m-%d')
           echo "Current Date: $CURRENT_DATE"
 
-          # Check for the presence of a Confluence link
+          # Extract Confluence link from PR description
           LINK=$(echo "$DESCRIPTION" | grep -o 'https://ajaib.atlassian.net/wiki/[^\"]*')
           
-          # Debug output for the link
+          # Validate the presence of the link
           if [[ -z "$LINK" ]]; then
             echo "::error::A Confluence release plan link with the domain https://ajaib.atlassian.net/wiki/ is missing in the PR description."
-            exit 1  # Exit with an error status to fail the action
+            exit 1  # Fail the action if the link is missing
           else
             echo "Found Confluence Link: $LINK"
           fi
 
-          # Extract the date from the link, assuming the date format is YYYY-MM-DD
+          # Extract date in YYYY-MM-DD format from the link
           LINK_DATE=$(echo "$LINK" | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}')
 
-          # Debug output for the extracted date
+          # Verify the presence of a valid date in the link
           if [[ -z "$LINK_DATE" ]]; then
             echo "::error::No valid date found in the Confluence link."
             exit 1
           fi
           echo "Date in Link: $LINK_DATE"
 
-          # Check if the date in the link matches the current date
+          # Verify the date matches the current date
           if [[ "$LINK_DATE" != "$CURRENT_DATE" ]]; then
             echo "::error::The date in the Confluence link ($LINK_DATE) does not match the current date ($CURRENT_DATE)."
             exit 1
           fi
-
-          echo "Confluence release plan link found, and date matches the current date."
 
       - name: Validate Confluence Page Exists (No Auth)
         run: |
