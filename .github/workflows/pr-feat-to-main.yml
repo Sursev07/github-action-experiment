@@ -56,8 +56,14 @@ jobs:
 
       - name: Validate Confluence Page Exists (No Auth)
         run: |
-          # Check if the Confluence page exists
-          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$LINK")
+          # Debugging: Print the LINK variable
+          echo "Checking Confluence Page Link: $LINK"
+          
+          # Check if the Confluence page exists without authentication
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" -L "$LINK")
+
+          # Output the status code for debugging
+          echo "HTTP Status Code: $STATUS_CODE"
 
           if [[ "$STATUS_CODE" -ne 200 ]]; then
             echo "::error::Confluence document not found or is not publicly accessible. Please check the link."
