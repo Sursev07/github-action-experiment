@@ -7,3 +7,7 @@ Testing action
 ```
 Testing confluence
 ```
+
+```
+Testing Empty Link
+```
