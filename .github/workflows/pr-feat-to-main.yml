@@ -1,0 +1,26 @@
+name: Check Confluence Release Plan Link
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-confluence-link:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for Confluence Release Plan Link
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DESCRIPTION=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "${{ github.event.pull_request.url }}" | jq -r .body)
+
+          # Check for Confluence Release Plan link with domain ajaib.atlassian.net and format YYYY-MM-DD in the link text
+          if [[ ! "$DESCRIPTION" =~ https://ajaib.atlassian.net/wiki/.+[0-9]{4}-[0-9]{2}-[0-9]{2} ]]; then
+            echo "A Confluence release plan link with the domain https://ajaib.atlassian.net/wiki/ and a date in the format YYYY-MM-DD is missing in the PR description."
+            exit 1  # Exit with an error status to fail the action
+          fi
+
+          echo "Confluence release plan link found in the PR description."
