@@ -3,7 +3,7 @@ name: Check Confluence Release Plan Link
 on:
   pull_request:
     branches:
-      - stg
+      - main
 
 jobs:
   check-confluence-link:
